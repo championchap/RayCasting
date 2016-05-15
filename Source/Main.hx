@@ -6,6 +6,8 @@ import openfl.display.Bitmap;
 import openfl.events.Event;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
+import openfl.Assets;
+import openfl.geom.Matrix;
 
 typedef Player = {
 	var height:Int;
@@ -41,8 +43,12 @@ class Main extends Sprite {
 	};
 
 	var camera2D = {
-		zoom : 0.1
+		zoom : 10,
+		rotation : 0.0,
+		matrix : new Matrix()
 	};
+
+	var map:Bitmap;
 
 	public function new() {
 		super();
@@ -55,7 +61,7 @@ class Main extends Sprite {
 		surface2D.bmp.x = (stage.stageWidth - surface2D.bmp.width) - 10;
 		surface2D.bmp.y = 10;
 
-		loadMap('images/level.png');
+		loadMap('assets/images/level.png');
 
 		initPlayer(Std.int(surface.size.x), Std.int(surface.size.y));
 
@@ -64,6 +70,9 @@ class Main extends Sprite {
 
 	function loadMap(path:String) {
 		// TODO : Load the file at location 'path' and turn it into a 2D array
+		map = new Bitmap(Assets.getBitmapData(path, true));
+		camera2D.matrix.scale(camera2D.zoom, camera2D.zoom);
+		surface2D.pixels.draw(map, camera2D.matrix);
 	}
 
 	function initPlayer(x:Int, y:Int) {
@@ -96,27 +105,12 @@ class Main extends Sprite {
 		// TODO : Render the 2D Map View here
 		surface2D.clear(0xFFE3E3E3);
 
-		var player_colour = 0xFF663399;
-		var wall_colour = 0xFF232323;
+		camera2D.rotation = 0.025;
+		camera2D.matrix.translate(-Std.int(camera2D.zoom * (0.5 * map.width)), -Std.int(camera2D.zoom * (0.5 * map.height)));
+		camera2D.matrix.rotate(camera2D.rotation);
+		camera2D.matrix.translate(Std.int(camera2D.zoom * (0.5 * map.width)), Std.int(camera2D.zoom * (0.5 * map.height)));
 
-		// draw the tiles offset by the position of the hero
-		surface2D.fillRect(
-			new Rectangle(0, 0, 64 * camera2D.zoom, 64 * camera2D.zoom),
-			wall_colour
-		);
-
-		var player_sprite = new Sprite();
-		var player_graphic = player_sprite.graphics;
-
-		// player_graphic.lineStyle(2, player_colour, 1, true);
-		player_graphic.beginFill(player_colour, 1);
-		player_graphic.drawCircle(
-			Std.int(surface2D.size.x / 2),
-			Std.int(surface2D.size.y / 2),
-			32 * camera2D.zoom
-		);
-
-		surface2D.pixels.draw(player_sprite);
+		surface2D.pixels.draw(map, camera2D.matrix);
 	}
 
 	function render3D() {
