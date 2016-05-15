@@ -40,6 +40,10 @@ class Main extends Sprite {
 		depth : 100
 	};
 
+	var camera2D = {
+		zoom : 0.1
+	};
+
 	public function new() {
 		super();
 
@@ -51,9 +55,15 @@ class Main extends Sprite {
 		surface2D.bmp.x = (stage.stageWidth - surface2D.bmp.width) - 10;
 		surface2D.bmp.y = 10;
 
+		loadMap('images/level.png');
+
 		initPlayer(Std.int(surface.size.x), Std.int(surface.size.y));
 
 		addEvents();
+	}
+
+	function loadMap(path:String) {
+		// TODO : Load the file at location 'path' and turn it into a 2D array
 	}
 
 	function initPlayer(x:Int, y:Int) {
@@ -86,12 +96,27 @@ class Main extends Sprite {
 		// TODO : Render the 2D Map View here
 		surface2D.clear(0xFFE3E3E3);
 
-		// draw the player
-		surface2D.pixels.setPixel(
-			Std.int(player.position.x),
-			Std.int(player.position.y),
-			0xFFFF0000
+		var player_colour = 0xFF663399;
+		var wall_colour = 0xFF232323;
+
+		// draw the tiles offset by the position of the hero
+		surface2D.fillRect(
+			new Rectangle(0, 0, 64 * camera2D.zoom, 64 * camera2D.zoom),
+			wall_colour
 		);
+
+		var player_sprite = new Sprite();
+		var player_graphic = player_sprite.graphics;
+
+		// player_graphic.lineStyle(2, player_colour, 1, true);
+		player_graphic.beginFill(player_colour, 1);
+		player_graphic.drawCircle(
+			Std.int(surface2D.size.x / 2),
+			Std.int(surface2D.size.y / 2),
+			32 * camera2D.zoom
+		);
+
+		surface2D.pixels.draw(player_sprite);
 	}
 
 	function render3D() {
