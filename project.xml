@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+	<meta title="RayCasting" package="com.sample.raycasting" version="1.0.0" company="Company Name" />
+	<app main="Main" path="Export" file="RayCasting" />
+	<window width="1280" height="720" fps="60" />
+
+	<source path="Source" />
+
+	<haxelib name="openfl" />
+
+	<assets path="Assets" rename="assets" />
+
+</project>
